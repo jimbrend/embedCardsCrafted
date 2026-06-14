@@ -649,6 +649,11 @@ Recommended output: crisp 1200x630 or similar card proportions, ultra sharp, exc
     [...ideData, ...ideData].forEach(ide => footerIdeTrack.appendChild(makeIdeEl("footer-ide-item", ide)));
   }
 
+  const topIdeTrack = $("#topIdeTrack");
+  if (topIdeTrack) {
+    [...ideData, ...ideData].forEach(ide => topIdeTrack.appendChild(makeIdeEl("top-ide-item", ide)));
+  }
+
   /* ---------- code sidebar (transform-slide + sound) ---------- */
   const codeSidebar = $("#codeSidebar");
   const csSnippets = $("#csSnippets");
