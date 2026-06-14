@@ -923,8 +923,9 @@ Recommended output: crisp 1200x630 or similar card proportions, ultra sharp, exc
   const grabFilesBtn = $("#grabFilesBtn");
   if (grabFilesBtn) {
     grabFilesBtn.addEventListener("click", () => {
-      toast("Preparing zip bundle…");
-      exportZip();
+      setMode("build");
+      const exportPanel = $(".export-panel");
+      if (exportPanel) exportPanel.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }
 
