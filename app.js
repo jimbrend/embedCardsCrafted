@@ -154,10 +154,11 @@
   function loadReel(i) {
     setTheme(reelTheme[i]);
     toast("Loaded card " + String(i + 1).padStart(2, "0") + " into the editor ↓");
-    // Flash-highlight the preview panel below
+    // Ensure we're on the main build view before scrolling
+    setMode("build");
     const previewPanel = $(".preview-panel");
     if (previewPanel) {
-      previewPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+      previewPanel.scrollIntoView({ behavior: "smooth", block: "start" });
       const embedEl = $("#embed");
       if (embedEl) {
         embedEl.style.transition = "box-shadow .15s, outline .15s";
