@@ -53,7 +53,7 @@
     const el = document.createElement("button");
     el.className = "reel-card";
     el.innerHTML = `<span class="tag">${tag}</span><img loading="lazy" src="${src}" alt="${tag} card"><span class="use">Load in editor</span>`;
-    el.addEventListener("click", () => loadReel(i % reelData.length));
+    el.addEventListener("click", () => { if (!didDrag) loadReel(i % reelData.length); });
 
     const dl = document.createElement("button");
     dl.className = "reel-dl";
@@ -71,23 +71,85 @@
   });
 
   let drift = 0, dragging = false, startX = 0, startDrift = 0, paused = false;
+  let didDrag = false; // track if pointer moved so click-after-drag is suppressed
   const SPEED = 0.28;
+
+  const reelScrub = $("#reelScrub");
+  const reelScrubThumb = $("#reelScrubThumb");
+
+  function reelHalf() { return reel.scrollWidth / 2 || 1; }
+
+  function updateScrubThumb() {
+    if (!reelScrub || !reelScrubThumb) return;
+    const half = reelHalf();
+    const pct = Math.max(0, Math.min(1, -drift / half));
+    const trackW = reelScrub.offsetWidth;
+    const thumbW = reelScrubThumb.offsetWidth;
+    reelScrubThumb.style.left = (pct * (trackW - thumbW)) + "px";
+    reelScrubThumb.style.marginLeft = "0";
+  }
+
   function tick() {
     if (!dragging && !paused) {
       drift -= SPEED;
-      const half = reel.scrollWidth / 2;
+      const half = reelHalf();
       if (-drift >= half) drift += half;
       if (drift > 0) drift -= half;
       reel.style.transform = `translateX(${drift}px)`;
     }
+    updateScrubThumb();
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
-  reel.addEventListener("pointerdown", (e) => { dragging = true; reel.classList.add("dragging"); startX = e.clientX; startDrift = drift; reel.setPointerCapture(e.pointerId); });
-  reel.addEventListener("pointermove", (e) => { if (!dragging) return; drift = startDrift + (e.clientX - startX); reel.style.transform = `translateX(${drift}px)`; });
+
+  // Reel card drag (pointer on cards)
+  reel.addEventListener("pointerdown", (e) => {
+    dragging = true; didDrag = false;
+    reel.classList.add("dragging");
+    startX = e.clientX; startDrift = drift;
+    reel.setPointerCapture(e.pointerId);
+  });
+  reel.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    if (Math.abs(e.clientX - startX) > 4) didDrag = true;
+    drift = startDrift + (e.clientX - startX);
+    reel.style.transform = `translateX(${drift}px)`;
+  });
   reel.addEventListener("pointerup", () => { dragging = false; reel.classList.remove("dragging"); });
   reel.addEventListener("mouseenter", () => paused = true);
   reel.addEventListener("mouseleave", () => paused = false);
+
+  // Scrub bar drag
+  if (reelScrub) {
+    let scrubDragging = false, scrubStartX = 0, scrubStartDrift = 0;
+    reelScrub.addEventListener("pointerdown", (e) => {
+      scrubDragging = true;
+      reelScrub.classList.add("grabbing");
+      scrubStartX = e.clientX; scrubStartDrift = drift;
+      paused = true;
+      reelScrub.setPointerCapture(e.pointerId);
+    });
+    reelScrub.addEventListener("pointermove", (e) => {
+      if (!scrubDragging) return;
+      const trackW = reelScrub.offsetWidth;
+      const thumbW = reelScrubThumb ? reelScrubThumb.offsetWidth : 48;
+      const usable = trackW - thumbW;
+      const half = reelHalf();
+      const dx = e.clientX - scrubStartX;
+      drift = scrubStartDrift - (dx / usable) * half;
+      reel.style.transform = `translateX(${drift}px)`;
+    });
+    reelScrub.addEventListener("pointerup", () => {
+      scrubDragging = false;
+      reelScrub.classList.remove("grabbing");
+      paused = false;
+    });
+    reelScrub.addEventListener("pointercancel", () => {
+      scrubDragging = false;
+      reelScrub.classList.remove("grabbing");
+      paused = false;
+    });
+  }
 
   function loadReel(i) {
     setTheme(reelTheme[i]);
@@ -631,22 +693,10 @@ Recommended output: crisp 1200x630 or similar card proportions, ultra sharp, exc
     return s;
   }
 
-  /* ---------- Export-panel IDE strip ---------- */
-  const track = $("#ideTrack");
-  if (track) {
-    [...ideData, ...ideData].forEach(ide => track.appendChild(makeIdeEl("ide", ide)));
-  }
-
   /* ---------- Sidebar IDE strip ---------- */
   const csIdeTrack = $("#csIdeTrack");
   if (csIdeTrack) {
     [...ideData, ...ideData].forEach(ide => csIdeTrack.appendChild(makeIdeEl("cs-ide-item", ide)));
-  }
-
-  /* ---------- Footer IDE strip ---------- */
-  const footerIdeTrack = $("#footerIdeTrack");
-  if (footerIdeTrack) {
-    [...ideData, ...ideData].forEach(ide => footerIdeTrack.appendChild(makeIdeEl("footer-ide-item", ide)));
   }
 
   const topIdeTrack = $("#topIdeTrack");
