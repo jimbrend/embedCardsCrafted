@@ -560,38 +560,93 @@ Recommended output: crisp 1200x630 or similar card proportions, ultra sharp, exc
     cl.appendChild(row);
   });
 
-  /* ---------- IDE data shared across tracks ---------- */
+  /* ---------- IDE data — proper logos + correct names ---------- */
   const ideData = [
-    ["Cu", "Cursor.com"], ["VS", "VS Code"], ["Co", "Copilot"], ["Nv", "Neovim"],
-    ["⌘", "CLI tools"], ["Wf", "Windsurf"], ["Cx", "Codex"], ["Cc", "Claude Cowork"],
-    ["Gk", "Grok Build"], ["Zd", "Zed"], ["Rv", "Ravity"]
+    {
+      name: "Cursor",
+      bg: "#0a0a0a", fg: "#ffffff",
+      /* cursor arrow */
+      svg: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2l16 9.5-9 2L9 22z"/></svg>`
+    },
+    {
+      name: "VS Code",
+      bg: "#007acc", fg: "#ffffff",
+      /* VS Code logo */
+      svg: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 2.5L9.2 11 5 7 2 8.5l4.5 4L2 17.5 5 19l4-3.5 8.5 8.5L22 22V2l-4.5.5zM18 18.5L10 12l8-6.5v13z"/></svg>`
+    },
+    {
+      name: "GitHub Copilot",
+      bg: "#24292f", fg: "#ffffff",
+      /* Copilot head with goggles */
+      svg: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7.6 2 4 5.6 4 10v2.5c0 1.5.5 2.8 1.4 3.9L6 20h12l.6-3.6c.9-1.1 1.4-2.4 1.4-3.9V10C20 5.6 16.4 2 12 2zm-2.5 11.8a1.8 1.8 0 110-3.6 1.8 1.8 0 010 3.6zm5 0a1.8 1.8 0 110-3.6 1.8 1.8 0 010 3.6z"/></svg>`
+    },
+    {
+      name: "Neovim",
+      bg: "#57a143", fg: "#ffffff",
+      /* Neovim N mark */
+      svg: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 21V3h3.5l9 12V3H19v18h-3.5L6.5 9V21z"/></svg>`
+    },
+    {
+      name: "CLI tools",
+      bg: "#0d1117", fg: "#22c55e",
+      /* terminal prompt >_ */
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="4 8 9 12 4 16"/><line x1="12" y1="16" x2="20" y2="16"/></svg>`
+    },
+    {
+      name: "Windsurf",
+      bg: "#4f46e5", fg: "#ffffff",
+      /* Codeium/Windsurf wave */
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 17c4-8 8-8 12 0s8 0 8 0"/><path d="M2 11c4-6 8-6 12 0s8 0 8 0"/></svg>`
+    },
+    {
+      name: "Codex",
+      bg: "#10a37f", fg: "#ffffff",
+      /* OpenAI Codex hexagon/layers */
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><polyline points="3 7 12 12 21 7"/><line x1="12" y1="12" x2="12" y2="22"/></svg>`
+    },
+    {
+      name: "Claude Cowork",
+      bg: "#d97559", fg: "#ffffff",
+      /* Anthropic / Claude A-mark */
+      svg: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 21h4l1.5-4h5L16 21h4L12 2zm-1 12l1.5-5 1.5 5h-3z"/></svg>`
+    },
+    {
+      name: "Grok Build",
+      bg: "#000000", fg: "#ffffff",
+      /* X / xAI logo */
+      svg: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 1.6h3.3l-7.2 8.2 8.5 11.2h-6.7l-5.2-6.8-6 6.8H1.5l7.7-8.8L1 1.6h6.8l4.7 6.2zm-1.2 17.7h1.8L7.3 3.4H5.4z"/></svg>`
+    },
+    {
+      name: "Antigravity",
+      bg: "#0f172a", fg: "#38bdf8",
+      /* up-arrow / anti-gravity */
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V4"/><path d="M5 11l7-7 7 7"/></svg>`
+    }
   ];
+
+  function makeIdeEl(className, ide) {
+    const s = document.createElement("span");
+    s.className = className;
+    s.innerHTML = `<span class="ide-logo" style="background:${ide.bg};color:${ide.fg}">${ide.svg}</span>${ide.name}`;
+    return s;
+  }
 
   /* ---------- Export-panel IDE strip ---------- */
   const track = $("#ideTrack");
   if (track) {
-    [...ideData, ...ideData].forEach(([b, n]) => {
-      const s = document.createElement("span"); s.className = "ide";
-      s.innerHTML = `<b>${b}</b>${n}`; track.appendChild(s);
-    });
+    [...ideData, ...ideData].forEach(ide => track.appendChild(makeIdeEl("ide", ide)));
   }
 
   /* ---------- Sidebar IDE strip ---------- */
   const csIdeTrack = $("#csIdeTrack");
   if (csIdeTrack) {
-    [...ideData, ...ideData].forEach(([b, n]) => {
-      const s = document.createElement("span"); s.className = "cs-ide-item";
-      s.innerHTML = `<b>${b}</b>${n}`; csIdeTrack.appendChild(s);
-    });
+    [...ideData, ...ideData].forEach(ide => csIdeTrack.appendChild(makeIdeEl("cs-ide-item", ide)));
   }
 
   /* ---------- Footer IDE strip ---------- */
   const footerIdeTrack = $("#footerIdeTrack");
   if (footerIdeTrack) {
-    [...ideData, ...ideData].forEach(([b, n]) => {
-      const s = document.createElement("span"); s.className = "footer-ide-item";
-      s.innerHTML = `<b>${b}</b>${n}`; footerIdeTrack.appendChild(s);
-    });
+    [...ideData, ...ideData].forEach(ide => footerIdeTrack.appendChild(makeIdeEl("footer-ide-item", ide)));
   }
 
   /* ---------- code sidebar (transform-slide + sound) ---------- */

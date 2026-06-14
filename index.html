@@ -92,6 +92,7 @@ a{color:inherit}
 }
 .nav-right{font-size:10px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;justify-self:end}
 .nav-hint{opacity:.6}
+.fork-hint{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);opacity:.7;font-weight:500;white-space:nowrap}
 
 /* ============ INSPIRATION REEL (signature) ============ */
 .hero{padding:54px 0 30px;position:relative}
@@ -386,6 +387,16 @@ body[data-mode="production"] .preview-panel .embed{transform:scale(1.04)}
 @keyframes ide{to{transform:translateX(-50%)}}
 .ide{display:flex;align-items:center;gap:8px;font-family:JetBrains Mono,monospace;font-size:12px;color:var(--ink-2);white-space:nowrap}
 .ide b{width:18px;height:18px;border-radius:5px;display:grid;place-items:center;background:#101014;border:1px solid var(--line);font-size:10px;color:var(--gold-2)}
+/* Branded IDE logo box — used across all 3 carousels */
+.ide-logo{
+  flex-shrink:0;width:18px;height:18px;border-radius:5px;
+  display:grid;place-items:center;overflow:hidden;
+}
+.ide-logo svg{width:11px;height:11px;display:block}
+.cs-ide-item .ide-logo{width:16px;height:16px;border-radius:4px}
+.cs-ide-item .ide-logo svg{width:10px;height:10px}
+.footer-ide-item .ide-logo{width:20px;height:20px;border-radius:6px}
+.footer-ide-item .ide-logo svg{width:12px;height:12px}
 
 /* ============ RIGHT PEEK SIDEBAR — lighter, transform-slide, no clipping ============ */
 .code-sidebar{
@@ -799,6 +810,7 @@ footer a{color:var(--ink-2);text-decoration:none}footer a:hover{color:var(--gold
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.38 7.86 10.9.58.1.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.23-1.28-5.23-5.7 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 012.9-.39c.98.01 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.8 1.19 1.83 1.19 3.09 0 4.43-2.69 5.41-5.25 5.69.41.35.77 1.04.77 2.1 0 1.52-.01 2.74-.01 3.12 0 .3.21.66.8.55A11.5 11.5 0 0023.5 12c0-6.27-5.23-11.5-11.5-11.5z"/></svg>
       <span class="gh-pop"><span class="gh-url">github.com/jimbrend/embedCardsCrafted</span><span class="gh-msg">View source · Fork or clone freely</span></span>
     </a>
+    <span class="fork-hint">Fork free</span>
   </div>
 
   <div class="modebar" role="tablist" aria-label="Workspace">
@@ -807,9 +819,7 @@ footer a{color:var(--ink-2);text-decoration:none}footer a:hover{color:var(--gold
     <button class="modebtn mode-staging" data-mode="staging" aria-pressed="false">Staging</button>
   </div>
 
-  <div class="nav-right">
-    <span class="nav-hint">Open source — fork freely</span>
-  </div>
+  <div class="nav-right"></div>
 </nav>
 
 <!-- ===================== PRODUCTION VIEW ===================== -->
